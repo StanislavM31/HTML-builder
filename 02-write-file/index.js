@@ -1,32 +1,28 @@
-/* console.log('Привет, я готов записать в файл. Введите чтонибудь...');
+/*  console.log('Привет, я готов записать в файл. Введите чтонибудь...');
 const { stdout } = process;
 console.log(stdout);
 stdout.write('Node.js');
-const fs = require('fs');
+const fs = require('fs'); */
 
- */
+
 const fs = require('fs');
-const readline = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout
+const path = require('path');
+const process = require('process');
+
+const pathToFile = path.join(__dirname, 'text.txt');
+const writeStream = fs.createWriteStream(pathToFile, {flags: 'a'});
+
+process.stdout.write('Please, write some text:\n');
+
+process.stdin.on('data', data => {
+  if (data.toString().trim() === 'exit') {
+    console.log('Good bye!');
+    process.exit();
+  }
+  writeStream.write(data);
 });
 
-readline.question('Напишите что-нибудь...\n', (name) => {
-
-  /* readline.close(); */
-  fs.open('text.txt', 'w', (err) => {
-    if(err) throw err;
-    
-    fs.writeFile('text.txt', name, function(error){
-   
-      if(error) throw error; // если возникла ошибка
-      /*console.log('запись файла завершена. Содержимое файла:');
-      let data = fs.readFileSync('text.txt', 'utf8');
-      console.log(data);  // выводим считанные данные */
-      console.log('запись файла завершена.Чтобы выйти из режима ЖМИ CTR + C');
-    });
-  });
+process.on('SIGINT', () => {
+  console.log('Good bye!');
+  process.exit();
 });
-
-
-
